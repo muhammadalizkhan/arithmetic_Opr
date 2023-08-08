@@ -1,0 +1,46 @@
+section .data
+    prompt_side db "Enter the side length of the square: ", 0
+    area_format db "The area of the square is: %f", 10, 0
+
+section .bss
+    side resq 1
+    area resq 1
+
+section .text
+    global _start
+
+_start:
+    ; Display prompt for side length
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, prompt_side
+    mov edx, 36
+    int 0x80
+
+    ; Read side length from user input
+    mov eax, 3
+    mov ebx, 0
+    mov ecx, side
+    mov edx, 10
+    int 0x80
+
+    ; Convert string to floating-point number
+    fild qword [side]
+
+    ; Calculate area: side * side
+    fmul    ; ST(0) = side * side
+    fstp qword [area] ; Store the result in the 'area' variable
+
+    ; Display the area of the square
+    push area
+    push area_format
+    call printf
+
+    ; Exit program
+    mov eax, 1
+    xor ebx, ebx
+    int 0x80
+
+; printf function (same as previous code)
+printf:
+    ; ... (same as before)
